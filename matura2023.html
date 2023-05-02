@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matura 2023 - Zegar</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    </style>
+</head>
+
+<body>
+    <h1>Matura 2023 - Język polski</h1>
+    <img src="./szkola_logo.jpg" alt="Grafika związana z maturą" style = "width: 50%;"> <!-- Wstaw ścieżkę do obrazu -->
+    <h2 id="time"></h2>
+    <canvas id="analogClock" width="220" height="220"></canvas>
+    <h3 id="countdown"></h3>
+    <button id="startButton">Start</button>
+    <script>
+    let endTime;
+    let timerStarted = false;
+
+    const timeElement = document.getElementById("time");
+    const countdownElement = document.getElementById("countdown");
+    const startButton = document.getElementById("startButton");
+
+    function updateTime() {
+        const now = new Date();
+
+        // Formatowanie czasu
+        const hours = String(now.getHours()).padStart(2, "0");
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+        const seconds = String(now.getSeconds()).padStart(2, "0");
+        timeElement.innerHTML = `${hours}:${minutes}:${seconds}`;
+
+        if (timerStarted) {
+            // Obliczenie pozostałego czasu
+            const remainingTime = endTime - now;
+            const remainingHours = Math.floor(remainingTime / (1000 * 60 * 60));
+            const remainingMinutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+            const remainingSeconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+            if (remainingTime > 0) {
+                countdownElement.innerHTML = `Pozostało: ${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s`;
+            } else {
+                countdownElement.innerHTML = "Egzamin zakończony";
+                timerStarted = false;
+            }
+        }
+    }
+
+    setInterval(updateTime, 1000);
+
+    startButton.addEventListener("click", function() {
+        if (!timerStarted) {
+            endTime = new Date(); // Ustaw datę i czas zakończenia egzaminu
+            endTime.setHours(endTime.getHours() + 3); // Dodaj 3 godziny do aktualnego czasu
+            endTime.setMinutes(endTime.getMinutes() + 30); // Dodaj 30 minut do aktualnego czasu
+            timerStarted = true;
+        }
+    });
+
+    const canvas = document.getElementById("analogClock");
+    const ctx = canvas.getContext("2d");
+    const initialRadius = canvas.height / 2;
+
+    ctx.translate(initialRadius, initialRadius);
+    const drawingRadius = initialRadius * 0.9;
+    setInterval(drawClock, 1000);
+
+    function drawClock() {
+        drawFace(ctx, drawingRadius);
+        drawNumbers(ctx, drawingRadius);
+        drawTime(ctx, drawingRadius);
+    }
+
+    function drawFace(ctx, radius) {
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = "white";
+
+        ctx.fill();
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = radius * 0.1;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * 0.1, 0, 2 * Math.PI);
+        ctx.fillStyle = "black";
+        ctx.fill();
+    }
+
+    function drawNumbers(ctx, radius) {
+        const font_size = radius * 0.15;
+        ctx.font = font_size + "px Arial";
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "black";
+
+        for (let num = 1; num < 13; num++) {
+            const ang = (num * Math.PI) / 6;
+            const x = radius * 0.85 * Math.sin(ang);
+            const y = -radius * 0.85 * Math.cos(ang);
+            ctx.fillText(num.toString(), x, y);
+        }
+    }
+
+    function drawTime(ctx, radius) {
+        let now = new Date();
+        let hour = now.getHours();
+        let minute = now.getMinutes();
+        let second = now.getSeconds();
+
+        // Hour hand
+        hour %= 12;
+        hour = (hour * Math.PI) / 6 + (minute * Math.PI) / (6 * 60) + (second * Math.PI) / (360 * 60);
+        drawHand(ctx, hour, radius * 0.5, radius * 0.07);
+
+        // Minute hand
+        minute = (minute * Math.PI) / 30 + (second * Math.PI) / (30 * 60);
+        drawHand(ctx, minute, radius * 0.8, radius * 0.07);
+
+        // Second hand
+        second = (second * Math.PI) / 30;
+        drawHand(ctx, second, radius * 0.9, radius * 0.02);
+    }
+
+    function drawHand(ctx, pos, length, width) {
+        ctx.beginPath();
+        ctx.lineWidth = width;
+        ctx.lineCap = "round";
+        ctx.moveTo(0, 0);
+        ctx.rotate(pos);
+        ctx.lineTo(0, -length);
+        ctx.stroke();
+        ctx.rotate(-pos);
+    }
+    </script>
+</body>
+
+</html>
