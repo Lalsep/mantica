@@ -19,7 +19,7 @@
 </head>
 
 <body>
-    <h1>Matura 2023 - Język polski</h1>
+    <h1>Matura 2023 - matematyka</h1>
     <img src="./szkola_logo.jpg" alt="Grafika związana z maturą"> <!-- Wstaw ścieżkę do obrazu -->
     <h2 id="time"></h2>
     <canvas id="analogClock" width="220" height="220"></canvas>
@@ -64,7 +64,7 @@
         if (!timerStarted) {
             endTime = new Date(); // Ustaw datę i czas zakończenia egzaminu
             endTime.setHours(endTime.getHours() + 3); // Dodaj 3 godziny do aktualnego czasu
-            endTime.setMinutes(endTime.getMinutes() + 30); // Dodaj 30 minut do aktualnego czasu
+            endTime.setMinutes(endTime.getMinutes() + 0); // Dodaj 30 minut do aktualnego czasu
             timerStarted = true;
         }
     });
