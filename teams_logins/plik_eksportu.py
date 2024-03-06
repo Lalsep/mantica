@@ -1,10 +1,12 @@
 # coding: utf-8
+# %load plik_eksportu.py
 input("Zaznacz obszar z nowymi uczniami w SharePoint, skopiuj do schowka, a następnie naciśnij Enter.")
 
 db = pd.read_clipboard(header=None, names =df.columns, dtype = 'str')
 dc = pd.read_csv('Import_User_Template.csv', dtype = 'str')
 from unidecode import unidecode
-
+db.rename(columns = {'Nazwisko':'Imię', 'Imię':'Nazwisko'}, inplace = True)
+db['Imię'] = db['Imię'].str.split(' ').str[0]
 # Funkcja do transformacji imienia i nazwiska
 def create_username(row):
     imie = unidecode(row['Imię'].strip().lower())
